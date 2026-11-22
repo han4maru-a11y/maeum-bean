@@ -1,0 +1,104 @@
+마음콩 전체 프로젝트 ZIP 내부 파일 목록
+
+최상위 폴더: maeum-bean/
+
+node_modules는 제외했습니다. npm ci로 package-lock.json에 고정된 의존성을 설치하세요.
+.env 및 실제 연결 정보는 포함하지 않았습니다. .env.example에는 자리표시자만 있습니다.
+dist/는 연결 정보 없이 생성한 참고용 빌드입니다. 실제 설정 후에는 다시 빌드하세요.
+setup_project.py는 초기 파일 생성 이력입니다. 실행 시 최신 설정 일부를 덮어쓰므로 재실행하지 마세요.
+
+파일 목록 (바이트):
+       95  maeum-bean/.env.example
+       36  maeum-bean/.gitignore
+     4758  maeum-bean/ACCEPTANCE.md
+    12878  maeum-bean/README.md
+     4077  maeum-bean/TEST_REPORT.md
+      555  maeum-bean/build-output.txt
+      517  maeum-bean/connected-build-output.txt
+       19  maeum-bean/dist/_redirects
+     5711  maeum-bean/dist/assets/black.png
+   407574  maeum-bean/dist/assets/charts-DwcqqtlH.js
+   222943  maeum-bean/dist/assets/index-BrUWVwKD.js
+    19107  maeum-bean/dist/assets/index-CWu7ZvG-.css
+     6521  maeum-bean/dist/assets/kidney.png
+     6348  maeum-bean/dist/assets/mung.png
+     7263  maeum-bean/dist/assets/pea.png
+     5718  maeum-bean/dist/assets/peanut.png
+        1  maeum-bean/dist/assets/supabase-l0sNRNKZ.js
+      501  maeum-bean/dist/index.html
+     6823  maeum-bean/dist/questions.json
+      327  maeum-bean/index.html
+   113447  maeum-bean/package-lock.json
+      594  maeum-bean/package.json
+       58  maeum-bean/postcss.config.cjs
+       19  maeum-bean/public/_redirects
+     5711  maeum-bean/public/assets/black.png
+     6521  maeum-bean/public/assets/kidney.png
+     6348  maeum-bean/public/assets/mung.png
+     7263  maeum-bean/public/assets/pea.png
+     5718  maeum-bean/public/assets/peanut.png
+     6823  maeum-bean/public/questions.json
+     4867  maeum-bean/setup_project.py
+     1864  maeum-bean/src/domain.mjs
+    38770  maeum-bean/src/main.tsx
+    13910  maeum-bean/src/style.css
+       38  maeum-bean/src/vite-env.d.ts
+    20455  maeum-bean/supabase/001_schema.sql
+     4915  maeum-bean/supabase/002_questions.sql
+     1767  maeum-bean/supabase/003_operations.sql
+     1143  maeum-bean/supabase/004_integration_check.sql
+       93  maeum-bean/tailwind.config.cjs
+     3410  maeum-bean/test-output.txt
+     9078  maeum-bean/tests/database.test.mjs
+     1416  maeum-bean/tests/domain.test.mjs
+      342  maeum-bean/tsconfig.json
+      318  maeum-bean/vercel.json
+      230  maeum-bean/vite.config.ts
+
+SHA-256 (아래 목록의 원본 파일 기준):
+1feff5f6cb060d974e34023fdb88dcbc92c8fca8ea1c3297ff1edb6077ecabed  .env.example
+e28f3ec2977f44cb6b5486cfce1b3b6796566510c4a0ff4f0ead89e6d98aa8fc  .gitignore
+7220702beaa86300c9e6c624e284ea31c6884685e54ac2c54782e7e7aeb50f21  ACCEPTANCE.md
+20e5de850f63596dc0a3da1a1ea402ff16cad9b930b0869e37e2f917871afd7b  README.md
+8eab80811abbeb3c24cb4e0aac2d7f6038043d33aab06d98ddad24d74874bf2d  TEST_REPORT.md
+2c5ae804683d240c2434f7457588417c490c5dd88ac86d4767b4ed394f5391ac  build-output.txt
+81ab04dd1afbd21e6c37cc589a3fb5a87441a41640227b1fb40247372fbe85ca  connected-build-output.txt
+6036983e5fc00f0169c9e939b1816ed771eee00e27f2fcc517b819041460b9ef  dist/_redirects
+7699a9748d4fcdac1ce2fea4e53a2b4487d0fa3078a323ade8cd525f481e3279  dist/assets/black.png
+ca598101f750ec4d38349f7cdbbfacc0a2fe89d3d5ec04954d14ff3484ff50b0  dist/assets/charts-DwcqqtlH.js
+8a569c972a1e015b99a8f1de4e195abe50cb513f751620152f46acada45432f7  dist/assets/index-BrUWVwKD.js
+461caee5a5f6f3a8772b499d0ce7cf09dbbaddee216192dbf1b7e5fccbfbe456  dist/assets/index-CWu7ZvG-.css
+9c8c4519f4ce434d070ac4a238f1bcf090f10c3fa13bd9d977774c057d108d3b  dist/assets/kidney.png
+b1eaeb7959d84cf1a45443dddc16857e87b232ef143e6e1ed41939ad134e3ecc  dist/assets/mung.png
+31a8a05cb124a7327ed495c1ff4ad922932c9f0a34e71e6d6eff0a183641aed8  dist/assets/pea.png
+9e690e41c892f3d6fabc55349b27a5dda0da5eba6ba40e901c4bc13577c8d7c8  dist/assets/peanut.png
+01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b  dist/assets/supabase-l0sNRNKZ.js
+6499aae40930f65d748ff78f631fcc8a6244e65573afb391304aa7c873005997  dist/index.html
+34b97998a5b39e3e18fd1548a80b422f11536ca6e06a31bbd04926184e09e8b1  dist/questions.json
+59b938b175b1301f7815c16fedde0c54b4176383996e39821339eaff9c6113c0  index.html
+bb34bdd390bfcf1def01f15d7c171bc8ce57dca91f1c073db7abd6db496c4369  package-lock.json
+d88d7c51c433d4c9ec91583f2c7b8e9d568b20bcf057cee2117bac3f6f91b0c3  package.json
+1101ca039933c92ba71d75728d98800c0ab3fa600f8bb82070dd2973c8bad9c3  postcss.config.cjs
+6036983e5fc00f0169c9e939b1816ed771eee00e27f2fcc517b819041460b9ef  public/_redirects
+7699a9748d4fcdac1ce2fea4e53a2b4487d0fa3078a323ade8cd525f481e3279  public/assets/black.png
+9c8c4519f4ce434d070ac4a238f1bcf090f10c3fa13bd9d977774c057d108d3b  public/assets/kidney.png
+b1eaeb7959d84cf1a45443dddc16857e87b232ef143e6e1ed41939ad134e3ecc  public/assets/mung.png
+31a8a05cb124a7327ed495c1ff4ad922932c9f0a34e71e6d6eff0a183641aed8  public/assets/pea.png
+9e690e41c892f3d6fabc55349b27a5dda0da5eba6ba40e901c4bc13577c8d7c8  public/assets/peanut.png
+34b97998a5b39e3e18fd1548a80b422f11536ca6e06a31bbd04926184e09e8b1  public/questions.json
+c33166e30ef04e5fbe54c70810667eac77deeef5e32afa581f4b9e28244e0257  setup_project.py
+1d2cd13bb3d818521354ae705cb1130cb0fd7b4417b5d8c191f7e277ac54272b  src/domain.mjs
+13fb32d3e1df52b2340222bacd34ff363df8c51878c7c1260df2aa5b51e3e729  src/main.tsx
+2634c64f08f1e71abf860a278444d00a9c3fc8a41f341b60f79c0e01e4356c90  src/style.css
+65996936fbb042915f7b74a200fcdde7e410f32a669b1ab9597cfaa4b0faddb5  src/vite-env.d.ts
+e8c495d6d58839322fad90c05ff6ffae3e9abdf81f0385409f050423a021cbf8  supabase/001_schema.sql
+b9fdf11a6f96af488a1392ebce70d53608cd9c280f2b16cb09888b263a7ce672  supabase/002_questions.sql
+acd3aefffb8c5e197763037612891ef710f4c1b248c0710f7cf4b4da861f1fe2  supabase/003_operations.sql
+832cab406206205bfc1211e5ffc900fff440d005dcebf175f24ca7d85ef440cc  supabase/004_integration_check.sql
+011ab0caa47466387cf191657c396f8b17dedb035482a0a2e078c8802eed8992  tailwind.config.cjs
+dbe68ea0ef1f24f3cfc5599a9b402c5f01fdd0f00f3ff13d7b75ba02ba67cc12  test-output.txt
+bc718815ad3d5061cf66ced11b600cae5466188337f70be476a8c5f03739743a  tests/database.test.mjs
+69b20817600924d76ab0d48d3e10a304f90c91f9a109028548a79fc4f04bc3c7  tests/domain.test.mjs
+95cc1df6699b9b7292529f6b900c9feaef38fcdb0a4063805d2944343c203026  tsconfig.json
+de36316bde7bd8976be537d5256264159dfed2dad545eba34a5e7451f65da1b1  vercel.json
+c10df084a95b7a8930650ff4268cb3a34920a2a273f9d48b3f7a8c223848b34d  vite.config.ts

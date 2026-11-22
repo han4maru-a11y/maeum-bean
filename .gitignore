@@ -1,0 +1,23 @@
+node_modules/
+dist/
+.env
+.env.local
+
+# Build and test artifacts
+*.tsbuildinfo
+*.log
+build-output.txt
+connected-build-output.txt
+test-output.txt
+coverage/
+
+# All environment variants except the safe template
+.env.*
+!.env.example
+
+# Local setup generator
+setup_project.py
+
+# Local backup files
+*.bak
+*_backup.*
