@@ -15,7 +15,19 @@ type Row=Record<string,any>;
 const url=import.meta.env.VITE_SUPABASE_URL,key=import.meta.env.VITE_SUPABASE_ANON_KEY;
 const teacherPath=location.pathname.startsWith('/teacher');
 // Keep prototype student and teacher sessions separate in the same browser.
-const db=url&&key&&!url.includes('YOUR_PROJECT')?createClient(url,key,teacherPath?{auth:{storageKey:'maeum-bean-teacher-auth'}}:undefined):null;
+let teacherAccessToken:string|undefined;
+
+const teacherFetch:typeof fetch=async(input,init)=>{
+ const requestUrl=new URL(input instanceof Request?input.url:String(input),location.href);
+ if(teacherAccessToken&&requestUrl.origin===new URL(url).origin&&requestUrl.pathname.startsWith('/rest/v1/')){
+  const headers=new Headers(init?.headers||(input instanceof Request?input.headers:undefined));
+  headers.set('Authorization','Bearer '+teacherAccessToken);
+  return fetch(input,{...init,headers});
+ }
+ return fetch(input,init);
+};
+
+const db=url&&key&&!url.includes('YOUR_PROJECT')?createClient(url,key,teacherPath?{auth:{storageKey:'maeum-bean-teacher-auth'},global:{fetch:teacherFetch}}:undefined):null;
 const icons:Record<string,React.ReactNode>={home:<Home/>,grow:<Sprout/>,records:<BookHeart/>,roulette:<Gift/>,me:<UserRound/>,dashboard:<LayoutDashboard/>,students:<Users/>,stats:<ChartNoAxesCombined/>,counsel:<MessageCircle/>,settings:<Settings/>};
 function Bean({type='pea',large=false}:{type?:string,large?:boolean}){return <img className={'bean '+(large?'large':'')} src={'/assets/'+type+'.png'} alt={beans.find(b=>b[0]===type)?.[1]||'콩 캐릭터'}/>}
 const growthStep=(growth=0,target=30)=>Math.max(1,Math.min(30,Math.round((Math.max(0,Math.min(growth,target))/Math.max(1,target))*29)+1));
@@ -26,7 +38,7 @@ function App(){
  const initialStudentQuestion=useRef(false);
  const[nickname,setNickname]=useState(''),[schoolName,setSchoolName]=useState(''),[studentClassName,setStudentClassName]=useState(''),[inviteCode,setInviteCode]=useState(new URLSearchParams(location.search).get('invite')||''),[classCode,setClassCode]=useState(''),[requestText,setRequestText]=useState(''),[note,setNote]=useState(''),[status,setStatus]=useState('확인 전'),[follow,setFollow]=useState(false),[reqId,setReqId]=useState(''),[clock,setClock]=useState(kstDate());
  useEffect(()=>{const h=setInterval(()=>setClock(kstDate()),30000);return()=>clearInterval(h)},[]);
- useEffect(()=>{if(!db)return;db.auth.getSession().then(({data:{session}})=>{setSession(session);setReady(true)});const{data:{subscription}}=db.auth.onAuthStateChange((_event,s)=>{setSession(s);if(_event==='SIGNED_OUT'||_event==='SIGNED_IN'){if(_event==='SIGNED_OUT')initialStudentQuestion.current=false;setProfile(null);setData({})}});return()=>subscription.unsubscribe()},[]);
+ useEffect(()=>{if(!db)return;db.auth.getSession().then(({data:{session}})=>{if(teacherPath)teacherAccessToken=session?.access_token;setSession(session);setReady(true)});const{data:{subscription}}=db.auth.onAuthStateChange((_event,s)=>{if(teacherPath)teacherAccessToken=s?.access_token;setSession(s);if(_event==='SIGNED_OUT'||_event==='SIGNED_IN'){if(_event==='SIGNED_OUT')initialStudentQuestion.current=false;setProfile(null);setData({})}});return()=>subscription.unsubscribe()},[]);
  const load=useCallback(async()=>{if(!db||!session)return;const{data:p,error:e}=await db.from('profiles').select('*').eq('id',session.user.id).single();if(e){setError(e.message);return}setProfile(p);setSchoolName(p.organization||'');const names=p.role==='student'?['classrooms','mood_records','bean_inventory','water_transactions','reward_inventory','counseling_requests','notifications','roulette_events','deletion_requests']:['classrooms','classroom_members','profiles','mood_records','counseling_requests','counseling_notes','notifications'];names.push('operation_settings');const out:Record<string,Row[]>={};for(const t of names){const{data:r,error:x}=await db.from(t).select('*').order(t==='operation_settings'?'id':t==='classroom_members'?'joined_at':'created_at',{ascending:false});if(x)throw x;out[t]=r||[]}setData(out);const{data:q,error:qe}=await db.from('daily_questions').select('*').eq('active',true);if(qe)throw qe;setQuestions(q||[]);if(p.role==='student'&&!initialStudentQuestion.current){initialStudentQuestion.current=true;const saved=(out.mood_records||[]).find(r=>r.kind==='basic'&&r.record_date===kstDate());setAnswer(saved?.answer||'');setTab('home');setTheme(null);setScreen('basic');}},[session]);
  useEffect(()=>{load().catch(e=>setError(e.message))},[load]);
  useEffect(()=>{if(!db||!session)return;const tables=['mood_records','counseling_requests','water_transactions','bean_inventory','notifications','classroom_members','reward_inventory'];const channel=db.channel('live-'+session.user.id);let timer:ReturnType<typeof setTimeout>;tables.forEach(t=>channel.on('postgres_changes',{event:'*',schema:'public',table:t},()=>{clearTimeout(timer);timer=setTimeout(()=>load().catch(e=>setError(e.message)),150)}));channel.subscribe();const poll=setInterval(()=>load().catch(()=>{}),30000);const visible=()=>{if(document.visibilityState==='visible')load().catch(()=>{})};document.addEventListener('visibilitychange',visible);return()=>{clearTimeout(timer);clearInterval(poll);document.removeEventListener('visibilitychange',visible);db?.removeChannel(channel)}},[session,load]);
@@ -44,7 +56,7 @@ function App(){
    if(!db)throw Error('서버 연결 설정이 필요합니다.');
    const {data,error}=await db.auth.signInWithPassword({email,password});
    if(error)throw error;
-   if(!data.session)throw Error('로그인에 실패했습니다.');
+   if(!data.session)throw Error('로그인에 실패했습니다.');teacherAccessToken=data.session.access_token;
    const {data:teacherProfile,error:profileError}=await db.from('profiles').select('*').eq('id',data.session.user.id).single();
 if(profileError)throw Error('교사 정보 조회 실패: '+profileError.message);
 if(teacherProfile.role!=='teacher'){
