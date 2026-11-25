@@ -19,14 +19,26 @@ let teacherAccessToken:string|undefined;
 
 const teacherFetch:typeof fetch=async(input,init)=>{
  const requestUrl=new URL(input instanceof Request?input.url:String(input),location.href);
- if(teacherAccessToken&&requestUrl.origin===new URL(url).origin&&requestUrl.pathname.startsWith('/rest/v1/')){
+
+ if(requestUrl.origin===new URL(url).origin&&requestUrl.pathname.startsWith('/rest/v1/')){
+  if(!teacherAccessToken){
+   throw Error('AUTH CHECK: 로그인 토큰 없음 / '+requestUrl.pathname);
+  }
+
   const headers=new Headers(init?.headers||(input instanceof Request?input.headers:undefined));
   headers.set('Authorization','Bearer '+teacherAccessToken);
-  return fetch(input,{...init,headers});
+  headers.set('apikey',key);
+
+  const response=await fetch(input,{...init,headers});
+
+  if(response.status===401||response.status===403){
+   throw Error('AUTH CHECK: 로그인 토큰 있음 / HTTP '+response.status+' / '+requestUrl.pathname);
+  }
+
+  return response;
  }
  return fetch(input,init);
 };
-
 const db=url&&key&&!url.includes('YOUR_PROJECT')?createClient(url,key,teacherPath?{auth:{storageKey:'maeum-bean-teacher-auth'},global:{fetch:teacherFetch}}:undefined):null;
 const icons:Record<string,React.ReactNode>={home:<Home/>,grow:<Sprout/>,records:<BookHeart/>,roulette:<Gift/>,me:<UserRound/>,dashboard:<LayoutDashboard/>,students:<Users/>,stats:<ChartNoAxesCombined/>,counsel:<MessageCircle/>,settings:<Settings/>};
 function Bean({type='pea',large=false}:{type?:string,large?:boolean}){return <img className={'bean '+(large?'large':'')} src={'/assets/'+type+'.png'} alt={beans.find(b=>b[0]===type)?.[1]||'콩 캐릭터'}/>}
