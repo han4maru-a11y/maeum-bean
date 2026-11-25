@@ -21,3 +21,5 @@ setup_project.py
 # Local backup files
 *.bak
 *_backup.*
+.vercel
+.env*
