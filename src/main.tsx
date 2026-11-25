@@ -45,7 +45,15 @@ function App(){
    const {data,error}=await db.auth.signInWithPassword({email,password});
    if(error)throw error;
    if(!data.session)throw Error('로그인에 실패했습니다.');
-   setNotice('로그인되었습니다.');
+   const {data:teacherProfile,error:profileError}=await db.from('profiles').select('*').eq('id',data.session.user.id).single();
+if(profileError)throw Error('교사 정보 조회 실패: '+profileError.message);
+if(teacherProfile.role!=='teacher'){
+ await db.auth.signOut();
+ throw Error('교사 권한이 없는 계정입니다.');
+}
+setSession(data.session);
+setProfile(teacherProfile);
+setNotice('로그인되었습니다.');
   })
  }
  const uid=session?.user.id,teacher=profile?.role==='teacher';
