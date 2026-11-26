@@ -47,7 +47,7 @@ function GrowingBean({type='pea',growth=0,target=30,large=false}:{type?:string,g
 function App(){
  const[session,setSession]=useState<any>(null),[ready,setReady]=useState(!db),[profile,setProfile]=useState<Row|null>(null),[tab,setTab]=useState('home'),[screen,setScreen]=useState(''),[error,setError]=useState(''),[notice,setNotice]=useState(''),[busy,setBusy]=useState(false),[data,setData]=useState<Record<string,Row[]>>({}),[questions,setQuestions]=useState<Row[]>([]),[classId,setClassId]=useState(''),[selected,setSelected]=useState(''),[period,setPeriod]=useState(7),[answer,setAnswer]=useState(''),[theme,setTheme]=useState<Row|null>(null),[rotation,setRotation]=useState(0);
  const teacherMode=teacherPath;
- const initialStudentQuestion=useRef(false);
+ const initialStudentQuestion=useRef(false); const[studentNickname,setStudentNickname]=useState("");
  const[nickname,setNickname]=useState(''),[schoolName,setSchoolName]=useState(''),[studentClassName,setStudentClassName]=useState(''),[inviteCode,setInviteCode]=useState(new URLSearchParams(location.search).get('invite')||''),[classCode,setClassCode]=useState(''),[requestText,setRequestText]=useState(''),[note,setNote]=useState(''),[status,setStatus]=useState('확인 전'),[follow,setFollow]=useState(false),[reqId,setReqId]=useState(''),[clock,setClock]=useState(kstDate());
  useEffect(()=>{const h=setInterval(()=>setClock(kstDate()),30000);return()=>clearInterval(h)},[]);
  useEffect(()=>{if(!db)return;db.auth.getSession().then(({data:{session}})=>{if(teacherPath)teacherAccessToken=session?.access_token;setSession(session);setReady(true)});const{data:{subscription}}=db.auth.onAuthStateChange((_event,s)=>{if(teacherPath)teacherAccessToken=s?.access_token;setSession(s);if(_event==='SIGNED_OUT'||_event==='SIGNED_IN'){if(_event==='SIGNED_OUT')initialStudentQuestion.current=false;setProfile(null);setData({})}});return()=>subscription.unsubscribe()},[]);
@@ -58,7 +58,7 @@ function App(){
  async function action(fn:()=>Promise<any>){if(busy)return;setBusy(true);setError('');try{await fn()}catch(e:any){setError(e.message||String(e))}finally{setBusy(false)}}
  async function rpc(name:string,args:Row={}){if(!db)throw Error('Supabase 연결 설정이 필요합니다');const r=await db.rpc(name,args);if(r.error)throw r.error;await load();return r.data}
  function go(t:string){setTab(t);setScreen('');setAnswer('');setTheme(null);setError('')}
- async function studentLogin(e:React.FormEvent){e.preventDefault();await action(async()=>{if(!db)throw Error('서버 연결 설정이 필요합니다.');const school=schoolName.trim().replace(/\s+/g,' '),className=studentClassName.trim().replace(/\s+/g,' '),teacherName=nickname.trim().replace(/\s+/g,' ');if(!school||!className||!teacherName)throw Error('학교명, 학급, 담당 교사명을 모두 입력해 주세요.');const internalName='학생-'+crypto.randomUUID().slice(0,6).toUpperCase();const{data,error}=await db.auth.signInAnonymously({options:{data:{role:'student',nickname:internalName,organization:school}}});if(error)throw error;if(!data.session)throw Error('학생 계정을 시작하지 못했습니다. 다시 시도해 주세요.');const joined=await db.rpc('join_class_by_details',{p_school:school,p_class_name:className,p_teacher_name:teacherName});if(joined.error){await db.auth.signOut();throw joined.error}setNotice('학급 연결이 완료됐어요. 마음콩을 시작할게요.')})}
+ async function studentLogin(e:React.FormEvent){e.preventDefault();await action(async()=>{if(!db)throw Error('서버 연결 설정이 필요합니다.');const school=schoolName.trim().replace(/\s+/g,' '),className=studentClassName.trim().replace(/\s+/g,' '),teacherName=nickname.trim().replace(/\s+/g,' ');if(!school||!className||!teacherName)throw Error('학교명, 학급, 담당 교사명을 모두 입력해 주세요.');const internalName=studentNickname.trim();if(!internalName||internalName.length>40)throw Error("학생 이름(닉네임)을 입력해 주세요.");const{data,error}=await db.auth.signInAnonymously({options:{data:{role:'student',nickname:internalName,organization:school}}});if(error)throw error;if(!data.session)throw Error('학생 계정을 시작하지 못했습니다. 다시 시도해 주세요.');const joined=await db.rpc('join_class_by_details',{p_school:school,p_class_name:className,p_teacher_name:teacherName});if(joined.error){await db.auth.signOut();throw joined.error}setNotice('학급 연결이 완료됐어요. 마음콩을 시작할게요.')})}
  async function teacherLogin(e:React.FormEvent){
   e.preventDefault();
   const form=new FormData(e.currentTarget as HTMLFormElement);
@@ -98,12 +98,12 @@ setNotice('로그인되었습니다.');
   {!db&&<div className="warning"><b>서버 연결 전</b><p>Supabase 연결 정보를 설정한 후 이용할 수 있습니다.</p></div>}
   {!teacherMode?<>
    <form onSubmit={studentLogin}>
-    <h2>우리 반 정보 입력하기</h2>
+    <h2>우리 반 정보 입력하기</h2><label>학생 이름 (닉네임)<input required maxLength={40} value={studentNickname} onChange={e=>setStudentNickname(e.target.value)} placeholder="예: 마음이"/></label>
     <p className="muted">학교, 학급, 담당 교사 정보를 입력하면 해당 학급과 연결돼요.</p><p className="muted">오늘의 마음 질문과 추가 질문에 답하면 담당 교사에게 자동으로 전달돼요.</p>
     <label>학교명<input required maxLength={100} value={schoolName} onChange={e=>setSchoolName(e.target.value)} placeholder="예: 마음중학교"/></label>
     <label>학급<input required maxLength={80} value={studentClassName} onChange={e=>setStudentClassName(e.target.value)} placeholder="예: 2학년 3반"/></label>
     <label>담당 교사명<input required maxLength={40} autoComplete="name" value={nickname} onChange={e=>setNickname(e.target.value)} placeholder="예: 김마음 선생님"/></label>
-    <button className="primary" disabled={busy||!db||!schoolName.trim()||!studentClassName.trim()||!nickname.trim()}>{busy?'학급을 확인하는 중…':'시작하기'}</button>
+    <button className="primary" disabled={busy||!db||!studentNickname.trim()||!schoolName.trim()||!studentClassName.trim()||!nickname.trim()}>{busy?'학급을 확인하는 중…':'시작하기'}</button>
    </form>
    </>:<>
    <form onSubmit={teacherLogin}>
